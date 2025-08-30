@@ -9,6 +9,8 @@
 #include <math.h>
 #include <inttypes.h>
 
+const float THETA2_OFFSET_DEG = 25.0f;	// initial angle for joint 2
+
 int main() {
     initArduinos();                     // set arduinos
     setupDXL();                         // set gripper, dispenser dxl
@@ -16,7 +18,7 @@ int main() {
 
     sendToLinear(2, 0, 0);             // Linear motor initialization
     setManipulatorControl();            // robot arm initialization
-    cubic_trajectory_fk_two_links(-38, -25, 1.0f);
+    cubic_trajectory_fk_two_links(-38, (0-THETA2_OFFSET_DEG), 1.0f);
     Sleep(1000);
 
     printf("--------------- Initialization complete! ---------------\n");
