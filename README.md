@@ -61,7 +61,13 @@
 </aside>
 
 ### 💡 알고리즘
-[사진 첨부]
+- **전체적인 흐름도**
+<div align="center">
+    <img width="500"  alt="Image" src="https://github.com/user-attachments/assets/89f432d2-63eb-44af-9215-d77dbae30711" />
+</div>
+
+- **음료**
+
 ***
 ## 🔧 Tools
 ![Arduino](https://img.shields.io/badge/Arduino-00979D?style=for-the-badge&logo=Arduino&logoColor=white)
