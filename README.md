@@ -63,12 +63,22 @@
 ### 💡 알고리즘
 - **전체적인 흐름도**
 <div align="center">
-    <img width="500"  alt="Image" src="https://github.com/user-attachments/assets/89f432d2-63eb-44af-9215-d77dbae30711" />
+    <img width="569" alt="Image" src="https://github.com/user-attachments/assets/2fbdcfb6-f4d4-4e56-a6fb-6ee0474732a9" />
 </div>
 
-- **음료**
+- **음료 제작 (Ice Americano, Hot Americano, Ice Tea, Ice Tea Americano)**
+<div align="center">
+    <img width="402" height="585" alt="Image" src="https://github.com/user-attachments/assets/927f88aa-7d69-47c3-81d2-826578aa9d97" />   
+    <img width="402" height="549" alt="Image" src="https://github.com/user-attachments/assets/372f6fee-9a01-4c5d-9cab-996c99db0ec3" />
+</div>
+
+<div align="center">
+    <img width="402" height="585" alt="Image" src="https://github.com/user-attachments/assets/6d3421e6-362d-4b52-a50a-38411d10d759" />   
+    <img width="600" height="585" alt="Image" src="https://github.com/user-attachments/assets/b518ec97-865f-48dd-9b80-be194ca4a34f" />
+</div>
 
 ***
+
 ## 🔧 Tools
 ![Arduino](https://img.shields.io/badge/Arduino-00979D?style=for-the-badge&logo=Arduino&logoColor=white)
 ![VS](https://img.shields.io/badge/Visual_Studio-5C2D91?style=for-the-badge&logo=visual%20studio&logoColor=white)
