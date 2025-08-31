@@ -23,8 +23,8 @@
 **[한양대학교 ERICA 로봇공학과]**
 | 팀장 김영성 | 팀원 강범진 | 팀원 김하영 | 팀원 정진우 |
 | --- | --- | --- | --- |
-| <div align="center"><img src="https://github.com/user-attachments/assets/178a1d4b-0fff-4015-a2bf-edf339d14269" width="100"/></div> | <div align="center"><img src="https://github.com/user-attachments/assets/60da614f-2460-4507-a8c4-d1108d3da024" width="100"/></div> | <div align="center"></div> | <div align="center"></div> |
-| 전장 시스템 설계, 통신 | 로봇 및 플랫폼 설계 | 로봇 제어 | 로봇 제어 |
+| <div align="center"><img src="https://github.com/user-attachments/assets/178a1d4b-0fff-4015-a2bf-edf339d14269" width="100"/></div> | <div align="center"><img src="https://github.com/user-attachments/assets/60da614f-2460-4507-a8c4-d1108d3da024" width="100"/></div> | <div align="center"><img src="https://github.com/user-attachments/assets/6755228b-f110-4001-a627-ba0e8c4c169a" width="100"/></div> | <div align="center"></div> |
+| <div align="center">전장 시스템 설계, 통신</div> | <div align="center">로봇 및 플랫폼 설계</div> | <div align="center">로봇 제어</div> | <div align="center">로봇 제어</div> |
 ***
 ## ⚙️ HW
 
