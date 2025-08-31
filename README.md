@@ -63,7 +63,7 @@
 ### 💡 알고리즘
 - **전체적인 흐름도**
 <div align="center">
-    <img width="569" alt="Image" src="https://github.com/user-attachments/assets/2fbdcfb6-f4d4-4e56-a6fb-6ee0474732a9" />
+    <img width="599" alt="Image" src="https://github.com/user-attachments/assets/2fbdcfb6-f4d4-4e56-a6fb-6ee0474732a9" />
 </div>
 
 - **음료 제작 (Ice Americano, Hot Americano, Ice Tea, Ice Tea Americano)**
