@@ -48,13 +48,13 @@
 │   │   ├── combined_dxl.h
 │   │   └── motor_controller.h
 │   ├── integrated_control
-│   │   └── integrated_control.cpp
+│   │   └── integrated_control.cpp    # robot testing code
 │   ├── src
 │   │   ├── combined_arduinos.cpp
 │   │   ├── combined_dxl.cpp
 │   │   └── motor_controller.cpp
 │   └── trajectory
-│       └── trajectory.cpp
+│       └── trajectory.cpp    # simulation
 └── README.md
 ```
 
