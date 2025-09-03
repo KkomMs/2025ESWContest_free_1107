@@ -8,21 +8,31 @@
 #include <iostream>
 #include <string>
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
+
+// 운영 중 초기 위치 세팅을 1회만 수행하기 위한 플래그
+bool g_init_done = false;
 
 // ===== ROBOT PARAMETER ===== //
 const float THETA2_OFFSET_DEG = 25.0f;  // (CW) initial theta for joint2
 
-typedef void (*element)(void);      // void fnction pointer
-
+// void fnction pointer
+typedef void (*element)(void);
 // circle queue struct
 typedef struct __circleQueue{
     int rear;
     int front;
     element* data;
 }Queue;
-
 Queue orders;       // coffee order queue
+
+enum class IceMaker {
+    MAKE_ICE_AMERICANO,
+    MAKE_HOT_AMERICANO,
+    MAKE_ICE_TEA,
+    MAKE_ICE_TEA_AMERICANO
+};
 
 void init_queue(Queue* q) {
     q->front = 0;
@@ -67,67 +77,22 @@ element dequeue(Queue* q) {
     }
 }
 
+bool get_cup();
+bool move_to_ice_maker(IceMaker beverage);
+bool get_coffee();
+bool get_syrup();
+const float it_syrup = 400.0f;
+const float ita_syrup = 250.0f;
+
 void ice_americano() {
 
     // ========== making ice americano sequence ========== //
-
     Sleep(1000);
-    cubic_trajectory_fk_one_link(2, (180.0f-THETA2_OFFSET_DEG), 1.5f);
-    Sleep(500);
+    get_cup();  // move to cup dispenser, get cup
 
-    // ===== move to dispenser, ready to hold cup =====
-    cubic_trajectory_fk_one_link(1, -154.608f, 2.0f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (62.807f-THETA2_OFFSET_DEG), 1.2f);
-    Sleep(500);
+    move_to_ice_maker(IceMaker::MAKE_ICE_AMERICANO);    // move to ice maker, get ice and water
 
-    moveDispenser(-70, 0.5f, -1);      // 컵 떨구기
-    Sleep(500);
-    moveGripper(260, 2.3f, 1);           // 컵 잡기
-    Sleep(500);
-
-    sendToLinear(2, 1, 15);           // linear 모터 올리기
-    Sleep(500);
-
-    moveL(-1.775f, -6.522f, -1.775f, -5.0f, 1.5f);     // draw out cup
-    Sleep(500);
-
-    sendToLinear(2, 0, 20);           // linear 모터 내리기
-    Sleep(500);
-
-    // ===== move to ice maker =====
-    cubic_trajectory_fk_one_link(1, -150.0f, 1);
-    Sleep(500);
-    cubic_trajectory_fk_two_links(-112.5f, (50.5f-THETA2_OFFSET_DEG), 1.5f);   // ice
-    Sleep(500);
-    sendToicemaker(4,3);
-    Sleep(15000);
-
-    cubic_trajectory_fk_one_link(1, -132.0f, 1);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (95.0f-THETA2_OFFSET_DEG), 1);         // water
-    Sleep(500);
-    sendToicemaker(3,4);
-    Sleep(20000);
-
-    // ===== move to coffee machine ======
-    cubic_trajectory_fk_one_link(1, -150.0f, 0.8f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (119.0f-THETA2_OFFSET_DEG), 0.8f);
-    Sleep(500);
-
-    sendToLinear(2, 1, 125);        // linear motor up      // 물 넣어서 컵이 처지면 107에서 4cm 정도는 더 올려야 함
-    Sleep(500);
-    cubic_trajectory_fk_one_link(1, 71.5f, 3.0f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (-42.5f-THETA2_OFFSET_DEG), 2.0f);        // coffee machine
-    Sleep(3000);
-
-    sendTocoffeemachine(2);     // espresso
-    Sleep(50000);
-    
-    moveL(3.493f, 6.490f, 1.693f, 6.490f, 2.2f);  // draw out cup
-    Sleep(500);
+    get_coffee();   // move to coffee machine, get espresso
 
     // ===== move to take-out zone =====
     sendToLinear(2, 0, 80);        // linear motor down
@@ -152,65 +117,30 @@ void ice_americano() {
     Sleep(1000);
     sendToLinear(2, 0, 30);
     Sleep(1000);
+    cubic_trajectory_fk_one_link(1, -120, 1.5f);
+    Sleep(1000);
+    cubic_trajectory_fk_one_link(2, -60, 1.5f);
+    Sleep(1000);
+    cubic_trajectory_fk_one_link(1, -130, 1.5f);
+    Sleep(1000);
+    cubic_trajectory_fk_one_link(2, -30, 1.5f);
+    Sleep(1000);
+    cubic_trajectory_fk_one_link(1, -145, 1.5f);
+    Sleep(1000);
+    cubic_trajectory_fk_one_link(2, 0, 1.5f);
+    Sleep(1000);
 }
 
 void hot_americano() {
 
     // ========== making hot americano sequence ========== //
-
     Sleep(1000);
-    cubic_trajectory_fk_one_link(2, (180.0f - THETA2_OFFSET_DEG), 1.5f);
-    Sleep(500);
 
-    // ===== move to dispenser, ready to hold cup =====
-    cubic_trajectory_fk_one_link(1, -154.608f, 2.0f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (62.807f - THETA2_OFFSET_DEG), 1.2f);
-    Sleep(500);
+    get_cup();
 
-    moveDispenser(-70, 0.5f, -1);      // 컵 떨구기
-    Sleep(500);
-    moveGripper(260, 2.3f, 1);           // 컵 잡기
-    Sleep(500);
+    move_to_ice_maker(IceMaker::MAKE_HOT_AMERICANO);    // water
 
-    sendToLinear(2, 1, 15);           // linear 모터 올리기
-    Sleep(500);
-
-    moveL(-1.775f, -6.522f, -1.775f, -5.0f, 1.5f);     // draw out cup
-    Sleep(500);
-
-    sendToLinear(2, 0, 20);           // linear 모터 내리기
-    Sleep(500);
-
-    cubic_trajectory_fk_one_link(1, -150.0f, 1);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (80.0f-THETA2_OFFSET_DEG), 1);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(1, -132.0f, 1);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (95.0f-THETA2_OFFSET_DEG), 1);         // water
-    Sleep(500);
-    sendToicemaker(3,7);
-    Sleep(20000);
-
-    // ==== = move to coffee machine ======
-    cubic_trajectory_fk_one_link(1, -150.0f, 0.8f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (119.0f - THETA2_OFFSET_DEG), 0.8f);
-    Sleep(500);
-
-    sendToLinear(2, 1, 120);        // linear motor up      // 물 넣어서 컵이 처지면 107에서 4cm 정도는 더 올려야 함
-    Sleep(500);
-    cubic_trajectory_fk_one_link(1, 71.5f, 3.0f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (-42.5f - THETA2_OFFSET_DEG), 2.0f);        // coffee machine
-    Sleep(3000);
-
-    sendTocoffeemachine(2);     // espresso
-    Sleep(50000);
-
-    moveL(3.493f, 6.490f, 1.693f, 6.490f, 2.2f);  // draw out cup
-    Sleep(1000);
+    get_coffee();
 
     // ===== move to take-out zone =====
     sendToLinear(2, 0, 80);        // linear motor down
@@ -227,76 +157,36 @@ void hot_americano() {
     Sleep(3000);
     moveGripper(-260, 6.3f, -1);        // open gripper
     Sleep(3000);
-    moveL(-5.502f, -1.717f, -3.0f, -1.717f, 4.0f, ElbowSolution::SOLUTION_ELBOW_DOWN);
+    moveL(-5.502f, -1.717f, -3.f, -1.717f, 4.0f, ElbowSolution::SOLUTION_ELBOW_DOWN);
     Sleep(1000);
     moveGripper(260, 4.0f, 1);        // close gripper
     Sleep(1000);
     sendToLinear(2, 0, 30);
     Sleep(1000);
+    cubic_trajectory_fk_one_link(2, -80, 1.5f);
+    Sleep(1000);
+    cubic_trajectory_fk_one_link(1, -120, 1.5f);
+    Sleep(1000);
+    cubic_trajectory_fk_one_link(2, -60, 1.5f);
+    Sleep(1000);
+    cubic_trajectory_fk_one_link(1, -130, 1.5f);
+    Sleep(1000);
+    cubic_trajectory_fk_one_link(2, -30, 1.5f);
+    Sleep(1000);
+    cubic_trajectory_fk_one_link(1, -145, 1.5f);
+    Sleep(1000);
+    cubic_trajectory_fk_one_link(2, 0, 1.5f);
+    Sleep(1000);
 }
 
 void ice_tea() {
     // ========== making ice americano sequence ========== //
-
     Sleep(1000);
-    cubic_trajectory_fk_one_link(2, (180.0f - THETA2_OFFSET_DEG), 1.5f);
-    Sleep(500);
+    get_cup();
 
-    // ===== move to dispenser, ready to hold cup =====
-    cubic_trajectory_fk_one_link(1, -154.608f, 2.0f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (62.807f - THETA2_OFFSET_DEG), 1.2f);
-    Sleep(500);
+    move_to_ice_maker(IceMaker::MAKE_ICE_TEA);  // ice, water
 
-    moveDispenser(-70, 0.5f, -1);      // 컵 떨구기
-    Sleep(500);
-    moveGripper(260, 2.3f, 1);           // 컵 잡기
-    Sleep(500);
-
-    sendToLinear(2, 1, 15);           // linear 모터 올리기
-    Sleep(500);
-
-    moveL(-1.775f, -6.522f, -1.775f, -5.0f, 1.5f);     // draw out cup
-    Sleep(500);
-
-    sendToLinear(2, 0, 20);           // linear 모터 내리기
-    Sleep(500);
-
-    // ===== move to ice maker =====
-    cubic_trajectory_fk_one_link(1, -150.0f, 1);
-    Sleep(500);
-    cubic_trajectory_fk_two_links(-112.5f, (50.5f - THETA2_OFFSET_DEG), 1.5f);   // ice
-    Sleep(500);
-    sendToicemaker(4,3);
-    Sleep(15000);
-
-    cubic_trajectory_fk_one_link(1, -132.0f, 1);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (95.0f - THETA2_OFFSET_DEG), 1);         // water
-    Sleep(500);
-    sendToicemaker(3,7);
-    Sleep(20000);
-
-     // ==== = move to syrup dispenser ======
-    cubic_trajectory_fk_one_link(1, -150.0f, 0.8f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (119.0f - THETA2_OFFSET_DEG), 0.8f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(1, -15.0f, 1.5f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (70.0f - THETA2_OFFSET_DEG), 1.5f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(1, -12.0f, 1.5f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (62.0f - THETA2_OFFSET_DEG), 1.5f);
-    Sleep(500);
-    sendToLinear(1, 0, 400);                                     //syrup 
-    Sleep(20000);
-    cubic_trajectory_fk_one_link(2, (70.0f - THETA2_OFFSET_DEG), 0.8f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(1, -15.0f, 0.8f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (119.0f - THETA2_OFFSET_DEG), 0.8f);
+    get_syrup(it_syrup);
   
     // ===== move to take-out zone =====
     sendToLinear(2, 1, 45);        // linear motor down
@@ -313,85 +203,24 @@ void ice_tea() {
     Sleep(1000);
     sendToLinear(2, 0, 35);
     Sleep(1000);
+    cubic_trajectory_fk_one_link(2, (180.0f - THETA2_OFFSET_DEG), 1.5f);
+    Sleep(500);
 }
 
 void ice_tea_americano() {
     // ========== making ice americano sequence ========== //
-
     Sleep(1000);
-    cubic_trajectory_fk_one_link(2, (180.0f - THETA2_OFFSET_DEG), 1.5f);
-    Sleep(500);
+    get_cup();
 
-    // ===== move to dispenser, ready to hold cup =====
-    cubic_trajectory_fk_one_link(1, -154.608f, 2.0f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (62.807f - THETA2_OFFSET_DEG), 1.2f);
-    Sleep(500);
+    move_to_ice_maker(IceMaker::MAKE_ICE_TEA_AMERICANO);    // ice, water
 
-    moveDispenser(-70, 0.5f, -1);      // 컵 떨구기
-    Sleep(500);
-    moveGripper(260, 2.3f, 1);           // 컵 잡기
-    Sleep(500);
-
-    sendToLinear(2, 1, 15);           // linear 모터 올리기
-    Sleep(500);
-
-    moveL(-1.775f, -6.522f, -1.775f, -5.0f, 1.5f);     // draw out cup
-    Sleep(500);
-
-    sendToLinear(2, 0, 20);           // linear 모터 내리기
-    Sleep(500);
-
-    // ===== move to ice maker =====
-    cubic_trajectory_fk_one_link(1, -150.0f, 1);
-    Sleep(500);
-    cubic_trajectory_fk_two_links(-112.5f, (50.5f - THETA2_OFFSET_DEG), 1.5f);   // ice
-    Sleep(500);
-    sendToicemaker(4,2);
-    Sleep(15000);
-
-    cubic_trajectory_fk_one_link(1, -132.0f, 1);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (95.0f - THETA2_OFFSET_DEG), 1);         // water
-    Sleep(500);
-    sendToicemaker(3,4);
-    Sleep(20000);
-
-    // ==== = move to syrup dispenser ======
-    cubic_trajectory_fk_one_link(1, -150.0f, 0.8f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (119.0f - THETA2_OFFSET_DEG), 0.8f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(1, -15.0f, 1.5f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (70.0f - THETA2_OFFSET_DEG), 1.5f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(1, -11.0f, 1.5f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (62.0f - THETA2_OFFSET_DEG), 1.5f);
-    Sleep(500);
-    sendToLinear(1, 0, 400);                                     //syrup 
-    Sleep(20000);
-    cubic_trajectory_fk_one_link(2, (70.0f - THETA2_OFFSET_DEG), 0.8f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(1, -15.0f, 0.8f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (119.0f - THETA2_OFFSET_DEG), 0.8f);
-    Sleep(500);
+    get_syrup(ita_syrup);
 
     // ==== = move to coffee machine ======
-    sendToLinear(2, 1, 125);        // linear motor up      // 물 넣어서 컵이 처지면 107에서 4cm 정도는 더 올려야 함
+    sendToLinear(2, 1, 125);        // linear motor up
     Sleep(500);
-    cubic_trajectory_fk_one_link(1, 71.5f, 2.0f);
-    Sleep(500);
-    cubic_trajectory_fk_one_link(2, (-42.5f - THETA2_OFFSET_DEG), 2.0f);        // coffee machine
-    Sleep(3000);
 
-    sendTocoffeemachine(2);     // espresso
-    Sleep(50000);
-
-    moveL(3.493f, 6.490f, 1.693f, 6.490f, 2.2f);  // draw out cup
-    Sleep(1000);
+    get_coffee();
 
     // ===== move to take-out zone =====
     sendToLinear(2, 0, 80);        // linear motor down
@@ -408,8 +237,9 @@ void ice_tea_americano() {
     Sleep(1000);
     sendToLinear(2, 0, 30);
     Sleep(1000);
+    cubic_trajectory_fk_one_link(2, (180.0f - THETA2_OFFSET_DEG), 1.5f);
+    Sleep(500);
 }
-
 
 void order(int *select, int *cups) {
     printf("\n음료를 선택하세요. (1: Ice Americano || 2: Hot Americano || 3: Ice Tea || 4: Ice Tea + Americano): ");
@@ -469,6 +299,8 @@ int main() {
                 flag = false;
         }
         printf("\n주문이 완료되었습니다. 음료 제작을 시작합니다.\n");
+        cubic_trajectory_fk_one_link(2, (180.0f - THETA2_OFFSET_DEG), 1.5f);
+        Sleep(1000);
 
         while (!is_empty(&orders)) {
             element make_coffee = dequeue(&orders);     // save the function pointer
@@ -489,4 +321,149 @@ int main() {
     CAN_close();
 
     return 0;
+}
+
+bool get_cup() {
+    printf("Getting cup from dispenser...\n");
+    cubic_trajectory_fk_one_link(1, -154.608f, 2.0f);
+    Sleep(500);
+    cubic_trajectory_fk_one_link(2, (62.807f - THETA2_OFFSET_DEG), 1.2f);
+    Sleep(500);
+    moveDispenser(-70, 0.5f, -1);
+    Sleep(500);
+    moveGripper(260, 2.3f, 1);
+    Sleep(500);
+    sendToLinear(2, 1, 15);
+    Sleep(500);
+    moveL(-1.775f, -6.522f, -1.775f, -5.0f, 1.5f);
+    Sleep(500);
+    sendToLinear(2, 0, 20);
+    Sleep(500);
+
+    return true;
+}
+
+bool move_to_ice_maker(IceMaker beverage) {
+    switch (beverage) {
+    case IceMaker::MAKE_ICE_AMERICANO:
+        cubic_trajectory_fk_one_link(1, -150.0f, 1);
+        Sleep(500);
+        cubic_trajectory_fk_two_links(-112.5f, (50.5f - THETA2_OFFSET_DEG), 1.5f);   // ice
+        Sleep(500);
+        sendToicemaker(4, 3);
+        Sleep(15000);
+
+        cubic_trajectory_fk_one_link(1, -132.0f, 1);
+        Sleep(500);
+        cubic_trajectory_fk_one_link(2, (95.0f - THETA2_OFFSET_DEG), 1);         // water
+        Sleep(500);
+        sendToicemaker(3, 4);
+        Sleep(20000);
+
+        cubic_trajectory_fk_one_link(1, -150.0f, 0.8f);
+        Sleep(500);
+        cubic_trajectory_fk_one_link(2, (119.0f - THETA2_OFFSET_DEG), 0.8f);
+        Sleep(500);
+
+        sendToLinear(2, 1, 125);        // linear motor up
+        Sleep(500);
+        break;
+    case IceMaker::MAKE_HOT_AMERICANO:
+        cubic_trajectory_fk_one_link(1, -150.0f, 1);
+        Sleep(500);
+        cubic_trajectory_fk_one_link(2, (80.0f - THETA2_OFFSET_DEG), 1);
+        Sleep(500);
+        cubic_trajectory_fk_one_link(1, -132.0f, 1);
+        Sleep(500);
+        cubic_trajectory_fk_one_link(2, (95.0f - THETA2_OFFSET_DEG), 1);         // water
+        Sleep(500);
+        sendToicemaker(3, 10);
+        Sleep(20000);
+
+        cubic_trajectory_fk_one_link(1, -150.0f, 0.8f);
+        Sleep(500);
+        cubic_trajectory_fk_one_link(2, (119.0f - THETA2_OFFSET_DEG), 0.8f);
+        Sleep(500);
+
+        sendToLinear(2, 1, 120);        // linear motor up
+        Sleep(500);
+        break;
+    case IceMaker::MAKE_ICE_TEA:
+        cubic_trajectory_fk_one_link(1, -150.0f, 1);
+        Sleep(500);
+        cubic_trajectory_fk_two_links(-112.5f, (50.5f - THETA2_OFFSET_DEG), 1.5f);   // ice
+        Sleep(500);
+        sendToicemaker(4, 3);
+        Sleep(15000);
+
+        cubic_trajectory_fk_one_link(1, -132.0f, 1);
+        Sleep(500);
+        cubic_trajectory_fk_one_link(2, (95.0f - THETA2_OFFSET_DEG), 1);         // water
+        Sleep(500);
+        sendToicemaker(3, 7);
+        Sleep(20000);
+        break;
+    case IceMaker::MAKE_ICE_TEA_AMERICANO:
+        cubic_trajectory_fk_one_link(1, -150.0f, 1);
+        Sleep(500);
+        cubic_trajectory_fk_two_links(-112.5f, (50.5f - THETA2_OFFSET_DEG), 1.5f);   // ice
+        Sleep(500);
+        sendToicemaker(4, 3);
+        Sleep(15000);
+
+        cubic_trajectory_fk_one_link(1, -132.0f, 1);
+        Sleep(500);
+        cubic_trajectory_fk_one_link(2, (95.0f - THETA2_OFFSET_DEG), 1);         // water
+        Sleep(500);
+        sendToicemaker(3, 3);
+        Sleep(20000);
+        break;
+    }
+
+    return true;
+}
+
+bool get_coffee() {
+    cubic_trajectory_fk_one_link(1, 90, 1.5f);
+    Sleep(500);
+    cubic_trajectory_fk_one_link(2, 0, 1.5f);
+    Sleep(500);
+    cubic_trajectory_fk_one_link(1, 105, 1.5f);
+    Sleep(500);
+    cubic_trajectory_fk_one_link(2, (-42.5f - THETA2_OFFSET_DEG), 2.0f);        // coffee machine
+    Sleep(500);
+    cubic_trajectory_fk_one_link(1, 71.5f, 2.0f);
+    Sleep(3000);
+
+    sendTocoffeemachine(2);     // espresso
+    Sleep(50000);
+
+    moveL(3.493f, 6.490f, 1.693f, 6.490f, 2.2f);  // draw out cup
+    Sleep(1000);
+
+    return true;
+}
+
+bool get_syrup(float beverage) {
+    cubic_trajectory_fk_one_link(1, -150.0f, 0.8f);
+    Sleep(500);
+    cubic_trajectory_fk_one_link(2, (119.0f - THETA2_OFFSET_DEG), 0.8f);
+    Sleep(500);
+    cubic_trajectory_fk_one_link(1, -15.0f, 1.5f);
+    Sleep(500);
+    cubic_trajectory_fk_one_link(2, (70.0f - THETA2_OFFSET_DEG), 1.5f);
+    Sleep(500);
+    cubic_trajectory_fk_one_link(1, -12.0f, 1.5f);
+    Sleep(500);
+    cubic_trajectory_fk_one_link(2, (62.0f - THETA2_OFFSET_DEG), 1.5f);
+    Sleep(500);
+    sendToLinear(1, 0, beverage);                                     //syrup 
+    Sleep(20000);
+    cubic_trajectory_fk_one_link(2, (70.0f - THETA2_OFFSET_DEG), 0.8f);
+    Sleep(500);
+    cubic_trajectory_fk_one_link(1, -15.0f, 0.8f);
+    Sleep(500);
+    cubic_trajectory_fk_one_link(2, (119.0f - THETA2_OFFSET_DEG), 0.8f);
+
+    return true;
 }
