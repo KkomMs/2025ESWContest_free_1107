@@ -29,8 +29,8 @@
 ## ⚙️ HW
 
 ### 🛠️ 설계도
-<img width="514" height="597" alt="Image" src="https://github.com/user-attachments/assets/3e579550-8bc1-4c30-b9fc-a0d142accca6" />
-<img width="360" height="600" alt="Image" src="https://github.com/user-attachments/assets/ba4fc58c-203c-43f6-8768-4a17b5d36704" />
+<img width="410" height="597" alt="Image" src="https://github.com/user-attachments/assets/3e579550-8bc1-4c30-b9fc-a0d142accca6" />
+<img width="290" height="600" alt="Image" src="https://github.com/user-attachments/assets/ba4fc58c-203c-43f6-8768-4a17b5d36704" />
 
 - **모듈형 설계**
   
