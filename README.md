@@ -28,13 +28,20 @@
 ***
 ## ⚙️ HW
 
-### 🛠️ 설계도
+### 🛠️ 로봇 및 플랫폼
 <img width="410" height="597" alt="Image" src="https://github.com/user-attachments/assets/3e579550-8bc1-4c30-b9fc-a0d142accca6" />
 <img width="290" height="600" alt="Image" src="https://github.com/user-attachments/assets/ba4fc58c-203c-43f6-8768-4a17b5d36704" />
 
 - **모듈형 설계**
   
     모듈형 설계(Base, 1st link, 2nd link, gripper)를 통한 빠른 부품 교환 가능. 유지보수 용이
+
+<img width="620" height="418" alt="Image" src="https://github.com/user-attachments/assets/6b529a51-c30b-4ab1-9635-30e9811ec182" />
+
+- **로봇 외관**
+  
+    주변 장비(제빙기, 커피 머신 등)의 통합 관리 가능
+
 
 ***
 ## 💻 SW
