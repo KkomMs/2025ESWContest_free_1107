@@ -29,8 +29,13 @@
 ## ⚙️ HW
 
 ### 🛠️ 설계도
-[사진 첨부]
-[내용 작성]
+<img width="514" height="597" alt="Image" src="https://github.com/user-attachments/assets/3e579550-8bc1-4c30-b9fc-a0d142accca6" />
+<img width="360" height="600" alt="Image" src="https://github.com/user-attachments/assets/ba4fc58c-203c-43f6-8768-4a17b5d36704" />
+
+- **모듈형 설계**
+  
+    모듈형 설계(Base, 1st link, 2nd link, gripper)를 통한 빠른 부품 교환 가능. 유지보수 용이
+
 ***
 ## 💻 SW
 
