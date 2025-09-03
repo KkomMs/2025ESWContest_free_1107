@@ -81,7 +81,7 @@ bool get_cup();
 bool move_to_ice_maker(IceMaker beverage);
 bool get_coffee();
 bool get_syrup();
-const float it_syrup = 400.0f;
+const float it_syrup = 200.0f;
 const float ita_syrup = 250.0f;
 
 void ice_americano() {
@@ -351,14 +351,16 @@ bool move_to_ice_maker(IceMaker beverage) {
         cubic_trajectory_fk_two_links(-112.5f, (50.5f - THETA2_OFFSET_DEG), 1.5f);   // ice
         Sleep(500);
         sendToicemaker(4, 3);
-        Sleep(15000);
+        Sleep(10000);
+        sendToicemaker(4, 1);
+        Sleep(10000);
 
         cubic_trajectory_fk_one_link(1, -132.0f, 1);
         Sleep(500);
         cubic_trajectory_fk_one_link(2, (95.0f - THETA2_OFFSET_DEG), 1);         // water
         Sleep(500);
         sendToicemaker(3, 4);
-        Sleep(20000);
+        Sleep(15000);
 
         cubic_trajectory_fk_one_link(1, -150.0f, 0.8f);
         Sleep(500);
@@ -394,14 +396,16 @@ bool move_to_ice_maker(IceMaker beverage) {
         cubic_trajectory_fk_two_links(-112.5f, (50.5f - THETA2_OFFSET_DEG), 1.5f);   // ice
         Sleep(500);
         sendToicemaker(4, 3);
-        Sleep(15000);
+        Sleep(10000);
+        sendToicemaker(4, 1);
+        Sleep(10000);
 
         cubic_trajectory_fk_one_link(1, -132.0f, 1);
         Sleep(500);
         cubic_trajectory_fk_one_link(2, (95.0f - THETA2_OFFSET_DEG), 1);         // water
         Sleep(500);
-        sendToicemaker(3, 7);
-        Sleep(20000);
+        sendToicemaker(3, 4);
+        Sleep(15000);
         break;
     case IceMaker::MAKE_ICE_TEA_AMERICANO:
         cubic_trajectory_fk_one_link(1, -150.0f, 1);
@@ -458,7 +462,7 @@ bool get_syrup(float beverage) {
     cubic_trajectory_fk_one_link(2, (62.0f - THETA2_OFFSET_DEG), 1.5f);
     Sleep(500);
     sendToLinear(1, 0, beverage);                                     //syrup 
-    Sleep(20000);
+    Sleep(15000);
     cubic_trajectory_fk_one_link(2, (70.0f - THETA2_OFFSET_DEG), 0.8f);
     Sleep(500);
     cubic_trajectory_fk_one_link(1, -15.0f, 0.8f);
