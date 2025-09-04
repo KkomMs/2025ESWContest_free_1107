@@ -80,7 +80,7 @@ element dequeue(Queue* q) {
 bool get_cup();
 bool move_to_ice_maker(IceMaker beverage);
 bool get_coffee();
-bool get_syrup();
+bool get_syrup(float beverage);
 const float it_syrup = 200.0f;
 const float ita_syrup = 250.0f;
 
@@ -114,8 +114,10 @@ void ice_americano() {
     moveL(-5.585f, -4.865f, -3.0f, -4.865f, 4.0f, ElbowSolution::SOLUTION_ELBOW_DOWN);
     Sleep(1000);
     moveGripper(260, 2.0f, 1);        // close gripper
-    Sleep(1000);
+    moveFirstStation(30, 0.4f, 1);    //  open station1
+    Sleep(5000);
     sendToLinear(2, 0, 30);
+    moveFirstStation(-30, 0.4f, -1);  // close station1
     Sleep(1000);
     cubic_trajectory_fk_one_link(1, -120, 1.5f);
     Sleep(1000);
@@ -160,8 +162,10 @@ void hot_americano() {
     moveL(-5.502f, -1.717f, -3.f, -1.717f, 4.0f, ElbowSolution::SOLUTION_ELBOW_DOWN);
     Sleep(1000);
     moveGripper(260, 4.0f, 1);        // close gripper
-    Sleep(1000);
+    moveSecondStation(30, 0.4f, 1);   // open station2
+    Sleep(5000);
     sendToLinear(2, 0, 30);
+    moveSecondStation(-30, 0.4f, -1);   // close station2
     Sleep(1000);
     cubic_trajectory_fk_one_link(2, -80, 1.5f);
     Sleep(1000);
@@ -200,8 +204,10 @@ void ice_tea() {
     moveL(-5.391f, 1.597f, -3.0f, 1.597f, 4.0f, ElbowSolution::SOLUTION_ELBOW_UP);
     Sleep(1000);
     moveGripper(260, 4.0f, 1);  // close gripper
-    Sleep(1000);
+    moveThirdStation(30, 0.4f, 1); // open station3
+    Sleep(5000);
     sendToLinear(2, 0, 35);
+    moveThirdStation(-30, 0.4f, -1); // close station3
     Sleep(1000);
     cubic_trajectory_fk_one_link(2, (180.0f - THETA2_OFFSET_DEG), 1.5f);
     Sleep(500);
@@ -225,17 +231,21 @@ void ice_tea_americano() {
     // ===== move to take-out zone =====
     sendToLinear(2, 0, 80);        // linear motor down
     Sleep(1000);
-    cubic_trajectory_fk_two_links(103.0f, (40.0f - THETA2_OFFSET_DEG), 2.5f);       // take-out zone
+    cubic_trajectory_fk_two_links(103.0f, (40.0f - THETA2_OFFSET_DEG), 2.5f);       // take-out zon
     Sleep(1500);
     sendToLinear(2, 0, 20);
     Sleep(2000);
     moveGripper(-260, 4.3f, -1);        // open gripper
-    Sleep(3000);
+    Sleep(2000);
     moveL(-5.639f, 4.838f, -3.0f, 4.838f, 4.0f, ElbowSolution::SOLUTION_ELBOW_UP);
     Sleep(1000);
     moveGripper(260, 2.0f, 1);   // close gripper
-    Sleep(1000);
+    sendToLED(12);
+    moveFourthStation(30, 0.48f, 1); // open station4
+    Sleep(5000);
     sendToLinear(2, 0, 30);
+    moveFourthStation(-30, 0.48f, -1); //close station4
+    sendToLED(12);
     Sleep(1000);
     cubic_trajectory_fk_one_link(2, (180.0f - THETA2_OFFSET_DEG), 1.5f);
     Sleep(500);
@@ -308,7 +318,7 @@ int main() {
                 make_coffee();      // function execution
         }
         printf("모든 음료 제작이 완료되었습니다. 초기 위치로 복귀합니다.\n");
-        Sleep(5000);
+        Sleep(1000);
         cubic_trajectory_fk_one_link(2, (180.0f-THETA2_OFFSET_DEG), 1.5f);
         Sleep(500);
         cubic_trajectory_fk_one_link(1, -38.0f, 2);
@@ -329,7 +339,7 @@ bool get_cup() {
     Sleep(500);
     cubic_trajectory_fk_one_link(2, (62.807f - THETA2_OFFSET_DEG), 1.2f);
     Sleep(500);
-    moveDispenser(-70, 0.5f, -1);
+    moveDispenser(-70, 0.3f, -1);
     Sleep(500);
     moveGripper(260, 2.3f, 1);
     Sleep(500);
@@ -352,14 +362,12 @@ bool move_to_ice_maker(IceMaker beverage) {
         Sleep(500);
         sendToicemaker(4, 3);
         Sleep(10000);
-        sendToicemaker(4, 1);
-        Sleep(10000);
 
         cubic_trajectory_fk_one_link(1, -132.0f, 1);
         Sleep(500);
         cubic_trajectory_fk_one_link(2, (95.0f - THETA2_OFFSET_DEG), 1);         // water
         Sleep(500);
-        sendToicemaker(3, 4);
+        sendToicemaker(3, 2);
         Sleep(15000);
 
         cubic_trajectory_fk_one_link(1, -150.0f, 0.8f);
@@ -379,7 +387,7 @@ bool move_to_ice_maker(IceMaker beverage) {
         Sleep(500);
         cubic_trajectory_fk_one_link(2, (95.0f - THETA2_OFFSET_DEG), 1);         // water
         Sleep(500);
-        sendToicemaker(3, 10);
+        sendToicemaker(3, 7);
         Sleep(20000);
 
         cubic_trajectory_fk_one_link(1, -150.0f, 0.8f);
@@ -397,14 +405,12 @@ bool move_to_ice_maker(IceMaker beverage) {
         Sleep(500);
         sendToicemaker(4, 3);
         Sleep(10000);
-        sendToicemaker(4, 1);
-        Sleep(10000);
 
         cubic_trajectory_fk_one_link(1, -132.0f, 1);
         Sleep(500);
         cubic_trajectory_fk_one_link(2, (95.0f - THETA2_OFFSET_DEG), 1);         // water
         Sleep(500);
-        sendToicemaker(3, 4);
+        sendToicemaker(3, 2);
         Sleep(15000);
         break;
     case IceMaker::MAKE_ICE_TEA_AMERICANO:
@@ -413,14 +419,14 @@ bool move_to_ice_maker(IceMaker beverage) {
         cubic_trajectory_fk_two_links(-112.5f, (50.5f - THETA2_OFFSET_DEG), 1.5f);   // ice
         Sleep(500);
         sendToicemaker(4, 3);
-        Sleep(15000);
+        Sleep(10000);
 
         cubic_trajectory_fk_one_link(1, -132.0f, 1);
         Sleep(500);
         cubic_trajectory_fk_one_link(2, (95.0f - THETA2_OFFSET_DEG), 1);         // water
         Sleep(500);
-        sendToicemaker(3, 3);
-        Sleep(20000);
+        sendToicemaker(3, 1);
+        Sleep(8000);
         break;
     }
 
@@ -434,15 +440,15 @@ bool get_coffee() {
     Sleep(500);
     cubic_trajectory_fk_one_link(1, 105, 1.5f);
     Sleep(500);
-    cubic_trajectory_fk_one_link(2, (-42.5f - THETA2_OFFSET_DEG), 2.0f);        // coffee machine
+    cubic_trajectory_fk_one_link(2, (-44.0f - THETA2_OFFSET_DEG), 2.0f);        // coffee machine
     Sleep(500);
-    cubic_trajectory_fk_one_link(1, 71.5f, 2.0f);
+    cubic_trajectory_fk_one_link(1, 71.0f, 2.0f);
     Sleep(3000);
 
     sendTocoffeemachine(2);     // espresso
     Sleep(50000);
 
-    moveL(3.493f, 6.490f, 1.693f, 6.490f, 2.2f);  // draw out cup
+    moveL(3.626f, 6.373f, 1.693f, 6.373f, 2.2f);  // draw out cup
     Sleep(1000);
 
     return true;
@@ -457,12 +463,12 @@ bool get_syrup(float beverage) {
     Sleep(500);
     cubic_trajectory_fk_one_link(2, (70.0f - THETA2_OFFSET_DEG), 1.5f);
     Sleep(500);
-    cubic_trajectory_fk_one_link(1, -12.0f, 1.5f);
+    cubic_trajectory_fk_one_link(1, -12.0f, 1.0f);
     Sleep(500);
-    cubic_trajectory_fk_one_link(2, (62.0f - THETA2_OFFSET_DEG), 1.5f);
+    cubic_trajectory_fk_one_link(2, (62.0f - THETA2_OFFSET_DEG), 1.0f);
     Sleep(500);
     sendToLinear(1, 0, beverage);                                     //syrup 
-    Sleep(15000);
+    Sleep(12000);
     cubic_trajectory_fk_one_link(2, (70.0f - THETA2_OFFSET_DEG), 0.8f);
     Sleep(500);
     cubic_trajectory_fk_one_link(1, -15.0f, 0.8f);
