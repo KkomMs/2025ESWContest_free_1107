@@ -48,7 +48,7 @@ void sendToicemaker(int function_num, int repeat) {
     if (function_num == 4) {  // ice
         for (int i = 0; i <= repeat; i++) {
             char cmd[16];
-            sprintf_s(cmd, "%d\n", function_num, repeat);
+            sprintf_s(cmd, "%d\n", function_num);
             DWORD bytesWritten;
             WriteFile(hSerial_COM4, cmd, strlen(cmd), &bytesWritten, NULL);
         }
@@ -56,20 +56,27 @@ void sendToicemaker(int function_num, int repeat) {
     else if (function_num == 3) {   // water
         for (int i = 0; i <= repeat; i++) {
             char cmd[16];
-            sprintf_s(cmd, "%d\n", function_num, repeat);
+            sprintf_s(cmd, "%d\n", function_num);
             DWORD bytesWritten;
             WriteFile(hSerial_COM4, cmd, strlen(cmd), &bytesWritten, NULL);
         }
     }
     else {
         char cmd[16];
-        sprintf_s(cmd, "%d\n", function_num, repeat);
+        sprintf_s(cmd, "%d\n", function_num);
         DWORD bytesWritten;
         WriteFile(hSerial_COM4, cmd, strlen(cmd), &bytesWritten, NULL);
     }
 }
 
 void sendTocoffeemachine(int function_num) {
+    char cmd[16];
+    sprintf_s(cmd, "%d\n", function_num);
+    DWORD bytesWritten;
+    WriteFile(hSerial_COM6, cmd, strlen(cmd), &bytesWritten, NULL);
+}
+
+void sendToLED(int function_num) {
     char cmd[16];
     sprintf_s(cmd, "%d\n", function_num);
     DWORD bytesWritten;
