@@ -20,13 +20,13 @@
 
 #define BAUDRATE                    57600
 #define PROTOCOL_VERSION            2.0
-#define DISPENSER_DXL_ID            0           // Dispenser ID: 0
-#define GRIPPER_DXL_ID              1           // Gripper ID: 1
+#define DISPENSER_DXL_ID            6           // Dispenser ID: 0
+#define GRIPPER_DXL_ID              7           // Gripper ID: 1
 ///  station  ///
-#define FIRST_STATION_DXL_ID            2           // FIRST_STATION ID: 2
-#define SECOND_STATION_DXL_ID           3           // SECOND_STATION ID: 3
-#define THIRD_STATION_DXL_ID            4           // THIRD_STATION ID: 4
-#define FOURTH_STATION_DXL_ID           5           // FOURTH_STATION ID: 5
+#define FIRST_STATION_DXL_ID            8           // FIRST_STATION ID: 8
+#define SECOND_STATION_DXL_ID           9           // SECOND_STATION ID: 9
+#define THIRD_STATION_DXL_ID            10           // THIRD_STATION ID: 10
+#define FOURTH_STATION_DXL_ID           11           // FOURTH_STATION ID: 11
 
 #define VELOCITY_MODE               1           // velocity control mode (infinite rev.)
 #define EXT_POSITION_MODE           4           // extended position control mode. -256 ~ 256 rev.
@@ -45,11 +45,10 @@ dynamixel::PacketHandler* packetHandler;
 int32_t grip_dxl_present_position = 0;
 int32_t disp_dxl_present_position = 0;
 ///  station  ///
-//int32_t first_station_dxl_present_position = 0;
-//int32_t second_station_dxl_present_position = 0;
-//int32_t third_station_dxl_present_position = 0;
-//int32_t fourth_station_dxl_present_position = 0;
-int32_t station_dxl_present_position[4] = 0;
+int32_t first_station_dxl_present_position = 0;
+int32_t second_station_dxl_present_position = 0;
+int32_t third_station_dxl_present_position = 0;
+int32_t fourth_station_dxl_present_position = 0;
 
 static inline float ticks_to_revs(int32_t ticks) {
     return (float)ticks / (float)TICKS_PER_REV;
@@ -71,19 +70,67 @@ void setupDXL() {
     }
     Sleep(100);
 
-    /// initialize dxl ///
-    uint8_t err = 0;
-    for (int i = 0; i < 6; i++) {
-        packetHandler->write1ByteTxRx(portHandler, i, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &err);    // torque off
-        packetHandler->write1ByteTxRx(portHandler, i, ADDR_OPERATING_MODE, VELOCITY_MODE, &err);    // velocity mode
-        packetHandler->write1ByteTxRx(portHandler, i, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &err);     // torque on
-        if (i == 0)
-            printf("Dispenser initialized successfully.\n");
-        else if (i == 1)
-            printf("Gripper initialized successfully.\n");
-        else
-            printf("%d station initialized successfully.\n", i - 1);
+    /// initialize gripper ///
+    {
+        uint8_t grip_dxl_error = 0;
+
+        // Torque OFF
+        packetHandler->write1ByteTxRx(portHandler, GRIPPER_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &grip_dxl_error);
+        // Velocity Mode
+        packetHandler->write1ByteTxRx(portHandler, GRIPPER_DXL_ID, ADDR_OPERATING_MODE, VELOCITY_MODE, &grip_dxl_error);
+        // Torque ON
+        packetHandler->write1ByteTxRx(portHandler, GRIPPER_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &grip_dxl_error);
+
+        printf("Gripper initialized successfully.\n");
     }
+
+    /// initialize dispenser ///
+    {
+        uint8_t disp_dxl_error = 0;
+
+        // Torque OFF
+        packetHandler->write1ByteTxRx(portHandler, DISPENSER_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &disp_dxl_error);
+        // Velocity Mode
+        packetHandler->write1ByteTxRx(portHandler, DISPENSER_DXL_ID, ADDR_OPERATING_MODE, VELOCITY_MODE, &disp_dxl_error);
+        // Torque ON
+        packetHandler->write1ByteTxRx(portHandler, DISPENSER_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &disp_dxl_error);
+
+        printf("Dispenser initialized successfully.\n");
+    }
+    ///  station  ///
+    /// initialize first_station ///
+    {
+        uint8_t err = 0;
+        packetHandler->write1ByteTxRx(portHandler, FIRST_STATION_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &err);
+        packetHandler->write1ByteTxRx(portHandler, FIRST_STATION_DXL_ID, ADDR_OPERATING_MODE, VELOCITY_MODE, &err);
+        packetHandler->write1ByteTxRx(portHandler, FIRST_STATION_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &err);
+        printf("first_station initialized successfully.\n");
+    }
+    /// initialize second_station ///
+    {
+        uint8_t err = 0;
+        packetHandler->write1ByteTxRx(portHandler, SECOND_STATION_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &err);
+        packetHandler->write1ByteTxRx(portHandler, SECOND_STATION_DXL_ID, ADDR_OPERATING_MODE, VELOCITY_MODE, &err);
+        packetHandler->write1ByteTxRx(portHandler, SECOND_STATION_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &err);
+        printf("second_station initialized successfully.\n");
+    }
+    /// initialize third_station ///
+    {
+        uint8_t err = 0;
+        packetHandler->write1ByteTxRx(portHandler, THIRD_STATION_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &err);
+        packetHandler->write1ByteTxRx(portHandler, THIRD_STATION_DXL_ID, ADDR_OPERATING_MODE, VELOCITY_MODE, &err);
+        packetHandler->write1ByteTxRx(portHandler, THIRD_STATION_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &err);
+        printf("third_station initialized successfully.\n");
+    }
+    /// initialize fourth_station ///
+    {
+        uint8_t err = 0;
+        packetHandler->write1ByteTxRx(portHandler, FOURTH_STATION_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &err);
+        packetHandler->write1ByteTxRx(portHandler, FOURTH_STATION_DXL_ID, ADDR_OPERATING_MODE, VELOCITY_MODE, &err);
+        packetHandler->write1ByteTxRx(portHandler, FOURTH_STATION_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, &err);
+        printf("fourth_station initialized successfully.\n");
+    }
+
 }
 
 // ===================== GRIPPER =====================
@@ -227,77 +274,241 @@ void moveDispenser(int32_t goal_velocity, float revolutions, int direction) {
     }
     printf("Dispenser :: %.3f revolution completed and stopped.\n", revolutions);
 }
-
-// ===================== STATION =====================
-void Station(int station_num, int32_t goal_velocity, float revolutions, int direction) {
+///  station  ///
+void moveFirstStation(int32_t goal_velocity, float revolutions, int direction) {
     if (goal_velocity > VELOCITY_LIMIT || goal_velocity < -VELOCITY_LIMIT) {
-        printf("%d station :: Invalid velocity. [Velocity limit: %d]\n", station_num, VELOCITY_LIMIT);
+        printf("first_station :: Invalid velocity. [Velocity limit: %d]\n", VELOCITY_LIMIT);
         return;
     }
     if (direction != -1 && direction != +1) {
-        printf("%d station :: Invalid direction. Use -1 (CW) or +1 (CCW).\n", station_num);
+        printf("first_station :: Invalid direction. Use -1 (CW) or +1 (CCW).\n");
         return;
     }
     if (revolutions <= 0.0f) {
-        printf("%d station :: revolutions must be > 0.\n", station_num);
+        printf("first_station :: revolutions must be > 0.\n");
         return;
     }
 
     uint8_t err = 0;
     int res = packetHandler->read4ByteTxRx(
-        portHandler, (station_num - 1), ADDR_PRESENT_POSITION,
-        (uint32_t*)&station_dxl_present_position[station_num - 1], &err
+        portHandler, FIRST_STATION_DXL_ID, ADDR_PRESENT_POSITION,
+        (uint32_t*)&first_station_dxl_present_position, &err
     );
-    if (res != COMM_SUCCESS) { 
-        printf("%d station :: Failed to read position.\n", station_num);
-        return; 
-    }
-    printf("%d station :: Start position: %ld\n", station_num, (long)station_dxl_present_position[station_num - 1]);
+    if (res != COMM_SUCCESS) { printf("first_station :: Failed to read position.\n"); return; }
+    printf("first_station :: Start position: %ld\n", (long)first_station_dxl_present_position);
 
     const int32_t goal_ticks_delta = direction * (int32_t)(revolutions * TICKS_PER_REV);
-    const int32_t goal_pos = station_dxl_present_position[station_num - 1] - goal_ticks_delta;
+    const int32_t goal_pos = first_station_dxl_present_position - goal_ticks_delta;
     const float   goal_rpm = (float)goal_velocity * RPM_TO_UNIT;
 
-    printf("%d station :: v=%ld (%.3f rpm), target=%.3f rev, dir=%s, goal_ticks=%ld\n",
-        station_num, (long)goal_velocity, goal_rpm, revolutions, (direction == -1 ? "CW" : "CCW"), (long)goal_pos);
+    printf("first_station :: v=%ld (%.3f rpm), target=%.3f rev, dir=%s, goal_ticks=%ld\n",
+        (long)goal_velocity, goal_rpm, revolutions, (direction == -1 ? "CW" : "CCW"), (long)goal_pos);
 
-    res = packetHandler->write4ByteTxRx(portHandler, (station_num - 1), ADDR_GOAL_VELOCITY, goal_velocity, &err);
-    if (res != COMM_SUCCESS) { 
-        printf("%d station :: Failed to write goal velocity.\n", station_num); 
-        return; 
-    }
+    res = packetHandler->write4ByteTxRx(portHandler, FIRST_STATION_DXL_ID, ADDR_GOAL_VELOCITY, goal_velocity, &err);
+    if (res != COMM_SUCCESS) { printf("first_station :: Failed to write goal velocity.\n"); return; }
 
-    int32_t curr_pos = station_dxl_present_position[station_num - 1];
+    int32_t curr_pos = first_station_dxl_present_position;
     do {
-        res = packetHandler->read4ByteTxRx(portHandler, (station_num - 1), ADDR_PRESENT_POSITION, (uint32_t*)&curr_pos, &err);
-        if (res != COMM_SUCCESS) 
-            break;
-        int32_t moved_ticks = curr_pos - station_dxl_present_position[station_num - 1];
+        res = packetHandler->read4ByteTxRx(portHandler, FIRST_STATION_DXL_ID, ADDR_PRESENT_POSITION, (uint32_t*)&curr_pos, &err);
+        if (res != COMM_SUCCESS) break;
+        int32_t moved_ticks = curr_pos - first_station_dxl_present_position;
         float moved_revs = fabsf(ticks_to_revs(moved_ticks));
-        if (moved_revs >= (revolutions - REV_EPSILON)) 
-            break;
+        if (moved_revs >= (revolutions - REV_EPSILON)) break;
         Sleep(100);
     } while (abs(goal_pos - curr_pos) > DXL_MOVING_STATUS_THRESHOLD);
 
-    res = packetHandler->write4ByteTxRx(portHandler, (station_num - 1), ADDR_GOAL_VELOCITY, 0, &err);
-    if (res != COMM_SUCCESS) { 
-        printf("%d station :: Failed to stop motor.\n", station_num);
-        return; 
-    }
-    printf("%d station :: % .3f revolution completed and stopped.\n", station_num, revolutions);
+    res = packetHandler->write4ByteTxRx(portHandler, FIRST_STATION_DXL_ID, ADDR_GOAL_VELOCITY, 0, &err);
+    if (res != COMM_SUCCESS) { printf("first_station :: Failed to stop motor.\n"); return; }
+    printf("first_station :: %.3f revolution completed and stopped.\n", revolutions);
 }
 
-void closeDXL() {
+void moveSecondStation(int32_t goal_velocity, float revolutions, int direction) {
+    if (goal_velocity > VELOCITY_LIMIT || goal_velocity < -VELOCITY_LIMIT) {
+        printf("second_station :: Invalid velocity. [Velocity limit: %d]\n", VELOCITY_LIMIT);
+        return;
+    }
+    if (direction != -1 && direction != +1) {
+        printf("second_station :: Invalid direction. Use -1 (CW) or +1 (CCW).\n");
+        return;
+    }
+    if (revolutions <= 0.0f) {
+        printf("second_station :: revolutions must be > 0.\n");
+        return;
+    }
+
+    uint8_t err = 0;
+    int res = packetHandler->read4ByteTxRx(
+        portHandler, SECOND_STATION_DXL_ID, ADDR_PRESENT_POSITION,
+        (uint32_t*)&second_station_dxl_present_position, &err
+    );
+    if (res != COMM_SUCCESS) { printf("second_station :: Failed to read position.\n"); return; }
+    printf("second_station :: Start position: %ld\n", (long)second_station_dxl_present_position);
+
+    const int32_t goal_ticks_delta = direction * (int32_t)(revolutions * TICKS_PER_REV);
+    const int32_t goal_pos = second_station_dxl_present_position - goal_ticks_delta;
+    const float   goal_rpm = (float)goal_velocity * RPM_TO_UNIT;
+
+    printf("second_station :: v=%ld (%.3f rpm), target=%.3f rev, dir=%s, goal_ticks=%ld\n",
+        (long)goal_velocity, goal_rpm, revolutions, (direction == -1 ? "CW" : "CCW"), (long)goal_pos);
+
+    res = packetHandler->write4ByteTxRx(portHandler, SECOND_STATION_DXL_ID, ADDR_GOAL_VELOCITY, goal_velocity, &err);
+    if (res != COMM_SUCCESS) { printf("second_station :: Failed to write goal velocity.\n"); return; }
+
+    int32_t curr_pos = second_station_dxl_present_position;
+    do {
+        res = packetHandler->read4ByteTxRx(portHandler, SECOND_STATION_DXL_ID, ADDR_PRESENT_POSITION, (uint32_t*)&curr_pos, &err);
+        if (res != COMM_SUCCESS) break;
+        int32_t moved_ticks = curr_pos - second_station_dxl_present_position;
+        float moved_revs = fabsf(ticks_to_revs(moved_ticks));
+        if (moved_revs >= (revolutions - REV_EPSILON)) break;
+        Sleep(100);
+    } while (abs(goal_pos - curr_pos) > DXL_MOVING_STATUS_THRESHOLD);
+
+    res = packetHandler->write4ByteTxRx(portHandler, SECOND_STATION_DXL_ID, ADDR_GOAL_VELOCITY, 0, &err);
+    if (res != COMM_SUCCESS) { printf("second_station :: Failed to stop motor.\n"); return; }
+    printf("second_station :: %.3f revolution completed and stopped.\n", revolutions);
+}
+
+void moveThirdStation(int32_t goal_velocity, float revolutions, int direction) {
+    if (goal_velocity > VELOCITY_LIMIT || goal_velocity < -VELOCITY_LIMIT) {
+        printf("third_station :: Invalid velocity. [Velocity limit: %d]\n", VELOCITY_LIMIT);
+        return;
+    }
+    if (direction != -1 && direction != +1) {
+        printf("third_station :: Invalid direction. Use -1 (CW) or +1 (CCW).\n");
+        return;
+    }
+    if (revolutions <= 0.0f) {
+        printf("third_station :: revolutions must be > 0.\n");
+        return;
+    }
+
+    uint8_t err = 0;
+    int res = packetHandler->read4ByteTxRx(
+        portHandler, THIRD_STATION_DXL_ID, ADDR_PRESENT_POSITION,
+        (uint32_t*)&third_station_dxl_present_position, &err
+    );
+    if (res != COMM_SUCCESS) { printf("third_station :: Failed to read position.\n"); return; }
+    printf("third_station :: Start position: %ld\n", (long)third_station_dxl_present_position);
+
+    const int32_t goal_ticks_delta = direction * (int32_t)(revolutions * TICKS_PER_REV);
+    const int32_t goal_pos = third_station_dxl_present_position - goal_ticks_delta;
+    const float   goal_rpm = (float)goal_velocity * RPM_TO_UNIT;
+
+    printf("third_station :: v=%ld (%.3f rpm), target=%.3f rev, dir=%s, goal_ticks=%ld\n",
+        (long)goal_velocity, goal_rpm, revolutions, (direction == -1 ? "CW" : "CCW"), (long)goal_pos);
+
+    res = packetHandler->write4ByteTxRx(portHandler, THIRD_STATION_DXL_ID, ADDR_GOAL_VELOCITY, goal_velocity, &err);
+    if (res != COMM_SUCCESS) { printf("third_station :: Failed to write goal velocity.\n"); return; }
+
+    int32_t curr_pos = third_station_dxl_present_position;
+    do {
+        res = packetHandler->read4ByteTxRx(portHandler, THIRD_STATION_DXL_ID, ADDR_PRESENT_POSITION, (uint32_t*)&curr_pos, &err);
+        if (res != COMM_SUCCESS) break;
+        int32_t moved_ticks = curr_pos - third_station_dxl_present_position;
+        float moved_revs = fabsf(ticks_to_revs(moved_ticks));
+        if (moved_revs >= (revolutions - REV_EPSILON)) break;
+        Sleep(100);
+    } while (abs(goal_pos - curr_pos) > DXL_MOVING_STATUS_THRESHOLD);
+
+    res = packetHandler->write4ByteTxRx(portHandler, THIRD_STATION_DXL_ID, ADDR_GOAL_VELOCITY, 0, &err);
+    if (res != COMM_SUCCESS) { printf("third_station :: Failed to stop motor.\n"); return; }
+    printf("third_station :: %.3f revolution completed and stopped.\n", revolutions);
+}
+
+void moveFourthStation(int32_t goal_velocity, float revolutions, int direction) {
+    if (goal_velocity > VELOCITY_LIMIT || goal_velocity < -VELOCITY_LIMIT) {
+        printf("fourth_station :: Invalid velocity. [Velocity limit: %d]\n", VELOCITY_LIMIT);
+        return;
+    }
+    if (direction != -1 && direction != +1) {
+        printf("fourth_station :: Invalid direction. Use -1 (CW) or +1 (CCW).\n");
+        return;
+    }
+    if (revolutions <= 0.0f) {
+        printf("fourth_station :: revolutions must be > 0.\n");
+        return;
+    }
+
+    uint8_t err = 0;
+    int res = packetHandler->read4ByteTxRx(
+        portHandler, FOURTH_STATION_DXL_ID, ADDR_PRESENT_POSITION,
+        (uint32_t*)&fourth_station_dxl_present_position, &err
+    );
+    if (res != COMM_SUCCESS) { printf("fourth_station :: Failed to read position.\n"); return; }
+    printf("fourth_station :: Start position: %ld\n", (long)fourth_station_dxl_present_position);
+
+    const int32_t goal_ticks_delta = direction * (int32_t)(revolutions * TICKS_PER_REV);
+    const int32_t goal_pos = fourth_station_dxl_present_position - goal_ticks_delta;
+    const float   goal_rpm = (float)goal_velocity * RPM_TO_UNIT;
+
+    printf("fourth_station :: v=%ld (%.3f rpm), target=%.3f rev, dir=%s, goal_ticks=%ld\n",
+        (long)goal_velocity, goal_rpm, revolutions, (direction == -1 ? "CW" : "CCW"), (long)goal_pos);
+
+    res = packetHandler->write4ByteTxRx(portHandler, FOURTH_STATION_DXL_ID, ADDR_GOAL_VELOCITY, goal_velocity, &err);
+    if (res != COMM_SUCCESS) { printf("fourth_station :: Failed to write goal velocity.\n"); return; }
+
+    int32_t curr_pos = fourth_station_dxl_present_position;
+    do {
+        res = packetHandler->read4ByteTxRx(portHandler, FOURTH_STATION_DXL_ID, ADDR_PRESENT_POSITION, (uint32_t*)&curr_pos, &err);
+        if (res != COMM_SUCCESS) break;
+        int32_t moved_ticks = curr_pos - fourth_station_dxl_present_position;
+        float moved_revs = fabsf(ticks_to_revs(moved_ticks));
+        if (moved_revs >= (revolutions - REV_EPSILON)) break;
+        Sleep(100);
+    } while (abs(goal_pos - curr_pos) > DXL_MOVING_STATUS_THRESHOLD);
+
+    res = packetHandler->write4ByteTxRx(portHandler, FOURTH_STATION_DXL_ID, ADDR_GOAL_VELOCITY, 0, &err);
+    if (res != COMM_SUCCESS) { printf("fourth_station :: Failed to stop motor.\n"); return; }
+    printf("fourth_station :: %.3f revolution completed and stopped.\n", revolutions);
+}
+
+
+void closeGripper() {
+    portHandler->setBaudRate(BAUDRATE);
+    uint8_t grip_dxl_error = 0;
+    packetHandler->write1ByteTxRx(portHandler, GRIPPER_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &grip_dxl_error);
+    portHandler->closePort();
+    printf("Gripper connection closed.\n");
+}
+
+void closeDispenser() {
+    portHandler->setBaudRate(BAUDRATE);
+    uint8_t disp_dxl_error = 0;
+    packetHandler->write1ByteTxRx(portHandler, DISPENSER_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &disp_dxl_error);
+    portHandler->closePort();
+    printf("Dispenser connection closed.\n");
+}
+///  station  ///
+void closeFirstStation() {
     portHandler->setBaudRate(BAUDRATE);
     uint8_t err = 0;
-    for (int i = 0; i < 6; i++) {
-        packetHandler->write1ByteTxRx(portHandler, i, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &err);
-        if (i == 0)
-            printf("Dispenser connection closed.\n");
-        else if (i == 1)
-            printf("Gripper connection closed.\n");
-        else
-            printf("%d station connection closed.\n", i - 1);
-    }
+    packetHandler->write1ByteTxRx(portHandler, FIRST_STATION_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &err);
     portHandler->closePort();
+    printf("first_station connection closed.\n");
 }
+
+void closeSecondStation() {
+    portHandler->setBaudRate(BAUDRATE);
+    uint8_t err = 0;
+    packetHandler->write1ByteTxRx(portHandler, SECOND_STATION_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &err);
+    portHandler->closePort();
+    printf("second_station connection closed.\n");
+}
+
+void closeThirdStation() {
+    portHandler->setBaudRate(BAUDRATE);
+    uint8_t err = 0;
+    packetHandler->write1ByteTxRx(portHandler, THIRD_STATION_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &err);
+    portHandler->closePort();
+    printf("third_station connection closed.\n");
+}
+
+void closeFourthStation() {
+    portHandler->setBaudRate(BAUDRATE);
+    uint8_t err = 0;
+    packetHandler->write1ByteTxRx(portHandler, FOURTH_STATION_DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE, &err);
+    portHandler->closePort();
+    printf("fourth_station connection closed.\n");
+}
+
