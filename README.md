@@ -11,12 +11,12 @@
     시중 바리스타 로봇 시스템에 비해 저렴한 비용 및 모듈형 구조를 통한 유지보수 효율성을 높여, 예비 창업자들의 진입장벽을 낮추고 커피 산업 내 자동화 기술의 대중화를 목표로 함.
     
 - **작품 외관**
+  
+<img width="780" height="597" alt="Image" src="https://github.com/user-attachments/assets/341845cc-1f50-42e8-bf20-e12e5a97dcab" />
     
-    [사진 첨부]
-    
-- **시연 영상**
-    
-    [영상 링크 첨부]
+- **시연 영상(사진 클릭 시 재생)**
+
+[![BARO](https://github.com/user-attachments/assets/341845cc-1f50-42e8-bf20-e12e5a97dcab)](https://youtu.be/kkzzoTA4NTc?si=MwrUqrTWJpY9Vvwy)
     
 
 ## 🧑‍💻 Team.HMH
