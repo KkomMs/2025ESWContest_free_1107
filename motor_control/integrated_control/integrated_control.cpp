@@ -37,7 +37,7 @@ int main() {
     int repeat;
 
     while (1) {
-        printf("\n== Select the mode ( 1: Arm | 2: Linear | 3: Gripper | 4: Dispenser | 5: Icemaker | 6: CoffeeMachine | 7:SYRUP | 8: EXIT ) ==\n");
+        printf("\n== Select the mode ( 1: Arm | 2: Linear | 3: Gripper | 4: Dispenser | 5: Icemaker | 6: CoffeeMachine | 7:SYRUP | 8: STATION | 9: LED | 10:EXIT ) ==\n");
         scanf_s("%d", &select_mode);
 
         /// ARM CONTROL ///
@@ -137,8 +137,25 @@ int main() {
             sendToLinear(1, dir, volume);
             Sleep(1000);
         }
-        /// EXIT ///
+        /// STATION ///
         else if (select_mode == 8) {
+            printf("Enter station (float)velocity: ");
+            scanf_s("%" SCNd32, &goal_vel);
+            printf("Enter station (float)revolutions (int)direction [(-1): CCW = open | (+1): CW = close]: ");
+            scanf_s("%f %d", &rev, &dir);
+            moveThirdStation(goal_vel, rev, dir);
+
+            Sleep(1000);
+        }
+        /// LED  ///
+        else if (select_mode == 9) {
+            printf("Enter LED function num (9: FIRST | 10: SECOND | 11: THIRD | 12: FOURTH): \n");
+            scanf_s("%d", &func);
+            sendToLED(func);
+            Sleep(1000);
+        }
+        /// EXIT ///
+        else if (select_mode == 10) {
             break;
         }
         else {
@@ -152,3 +169,4 @@ int main() {
 
     return 0;
 }
+
