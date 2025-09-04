@@ -88,7 +88,7 @@ void setManipulatorControl() {
 	CAN_SetTimeout(handle, 33, 100, 0);
 	CAN_Purge(handle);
 
-	set_controller_mode(1, 3, 5);
+	set_controller_mode(1, 3, 1);
 	set_controller_mode(2, 3, 5);
 	set_axis_state(1, 8);
 	set_axis_state(2, 8);
